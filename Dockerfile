@@ -10,6 +10,6 @@ RUN apk-install -t build-deps go git mercurial \
 	&& export GOPATH=/go \
 	&& cp /go/src/github.com/mijime/registrator-dynamodb/modules.go modules.go \
 	&& go get \
-	&& go build -ldflags "-X main.Version $(cat VERSION)" -o /bin/registrator \
+	&& go build -ldflags "-X main.Version $(cat VERSION)-dynamodb" -o /bin/registrator \
 	&& rm -rf /go \
 	&& apk del --purge build-deps
