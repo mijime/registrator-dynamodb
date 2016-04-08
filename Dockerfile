@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.1
+FROM gliderlabs/alpine:3.3
 ENTRYPOINT ["/bin/registrator"]
 
 ADD . /go/src/github.com/mijime/registrator-dynamodb
