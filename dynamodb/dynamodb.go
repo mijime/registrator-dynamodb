@@ -2,6 +2,7 @@ package dynamodb
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/gliderlabs/registrator/bridge"
 	"log"
@@ -40,14 +41,16 @@ func (c *Client) Delete(key string, isBool bool) (*dynamodb.DeleteItemOutput, er
 }
 
 func NewClient(table string) (*Client, error) {
+	sess := session.New()
 	var c *aws.Config
 	if os.Getenv("DYNAMODB_LOCAL") != "" {
-		c = &aws.Config{Endpoint: os.Getenv("DYNAMODB_LOCAL")}
+		endpoint := os.Getenv("DYNAMODB_LOCAL")
+		c = &aws.Config{Endpoint: &endpoint}
 	} else {
 		c = nil
 	}
 
-	d := dynamodb.New(c)
+	d := dynamodb.New(sess, c)
 	// Check if the table exists
 	_, err := d.DescribeTable(&dynamodb.DescribeTableInput{TableName: &table})
 	if err != nil {
@@ -107,6 +110,10 @@ func (r *DynamodbAdapter) Deregister(service *bridge.Service) error {
 
 func (r *DynamodbAdapter) Refresh(service *bridge.Service) error {
 	return r.Register(service)
+}
+
+func (r *DynamodbAdapter) Services() ([]*bridge.Service, error) {
+	return []*bridge.Service{}, nil
 }
 
 func (r *DynamodbAdapter) servicePath(service *bridge.Service) string {
